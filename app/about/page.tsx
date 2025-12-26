@@ -2,11 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Instagram } from 'lucide-react';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-
-const supabaseUrl = 'YOUR_SUPABASE_URL';
-const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
-const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey);
+import { supabase } from '@/lib/supabase';
 
 const About: React.FC = () => {
   const [photoUrl, setPhotoUrl] = useState<string>('');
