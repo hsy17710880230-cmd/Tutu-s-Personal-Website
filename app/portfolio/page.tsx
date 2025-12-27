@@ -1,11 +1,10 @@
-"use client"
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-// import LazyImage from '../components/LazyImage';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '@/lib/supabase'; // Adjusted path to @/lib usually preferred in Next.js
 import type { FileObject } from '@supabase/storage-js';
-
+import Image from 'next/image';
 
 interface ProjectImage {
   filename: string;
@@ -24,7 +23,7 @@ const Portfolio: React.FC = () => {
 
   useEffect(() => {
     const fetchProjects = async () => {
-      // List all first-level folders in the 'portfolio' bucket
+      // List all first-level folders in the 'files' bucket
       const { data: folders, error: foldersError } = await supabase
         .storage
         .from('files')
@@ -54,13 +53,14 @@ const Portfolio: React.FC = () => {
               url: supabase.storage.from('files').getPublicUrl(`${folder.name}/${file.name}`).data.publicUrl
             }));
 
+            // Find title.png or default to the first image
             const titleImage = images.find(img => img.filename === 'title.png');
             const cover = titleImage ? titleImage.url : images[0].url;
 
             projectsData[folder.name] = {
               images,
               cover,
-              count: images.length - 1
+              count: images.length - 1 // Excluding title image logic if applicable
             };
           })
       );
@@ -72,44 +72,38 @@ const Portfolio: React.FC = () => {
   }, []);
 
   return (
-    <div className="container" style={{ paddingBottom: '4rem' }}>
-      <h2 style={{ textAlign: 'center', margin: '3rem 0' }}>My Projects</h2>
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-        gap: '2rem', 
-        padding: '2rem 0' 
-      }}>
+    <div className="container mx-auto px-4 pb-16">
+      <h2 className="my-12 text-center text-3xl font-bold text-gray-800">
+        My Projects
+      </h2>
+      
+      {/* Grid Container */}
+      <div className="grid grid-cols-1 gap-8 py-8 sm:grid-cols-2 lg:grid-cols-3">
         {Object.entries(projects).map(([projectName, { cover, count }]) => (
-          <div 
-            key={projectName} 
-            className="portfolio-item" 
+          <div
+            key={projectName}
             onClick={() => router.push(`/portfolio/${projectName}`)}
-            style={{ 
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column'
-            }}
+            className="group flex cursor-pointer flex-col overflow-hidden rounded-[20px] bg-white shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-lg"
           >
-            <div style={{ 
-              width: '100%', 
-              height: '300px', 
-              overflow: 'hidden',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: '#f5f5f5',
-              borderRadius: '20px 20px 0 0'
-            }}>
-              <img 
-                src={cover} 
+            {/* Image Wrapper */}
+            <div className="flex h-[300px] w-full items-center justify-center overflow-hidden bg-gray-100">
+              <Image
+                src={cover}
                 alt={projectName}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                width={500}
+                height={500}
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
             </div>
-            <div style={{ padding: '1.5rem', textAlign: 'center' }}>
-              <h3>{projectName.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</h3>
-              <p style={{ color: '#888', marginTop: '0.5rem' }}>{count} images</p>
+            
+            {/* Content Wrapper */}
+            <div className="p-6 text-center">
+              <h3 className="text-xl font-bold text-gray-800">
+                {projectName.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+              </h3>
+              <p className="mt-2 text-sm font-medium text-gray-500">
+                {count} images
+              </p>
             </div>
           </div>
         ))}

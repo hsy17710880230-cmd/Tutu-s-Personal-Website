@@ -24,12 +24,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
       >
-        <Navbar/>
-        {children}
+        <div className="flex h-full flex-col">
+          <Navbar />
+          {/* Add flex-col here 👇 */}
+          <main className="flex flex-1 flex-col items-center justify-center">
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );

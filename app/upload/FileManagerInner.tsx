@@ -2,13 +2,19 @@
 
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import Image from 'next/image';
 
 interface BucketFile {
   name: string;
   path: string;
 }
 
-const FileManagerInner: React.FC = () => {
+const isImage = (name: string) => {
+  if (name.split(".")[0] == "title") return false;
+  return /\.(jpg|jpeg|png|gif|webp)$/i.test(name);
+}
+
+export default function FileManagerInner() {
   const [folders, setFolders] = useState<string[]>([]);
   const [selectedFolder, setSelectedFolder] = useState('');
   const [selectedUploadFolder, setSelectedUploadFolder] = useState('');
@@ -21,244 +27,199 @@ const FileManagerInner: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  /* -----------------------------
-     Fetch folders
-  ------------------------------ */
+  /* ---------------- Fetch folders ---------------- */
   const fetchFolders = async () => {
-    try {
-      const { data, error } = await supabase.storage
-        .from('files')
-        .list('', { limit: 1000 });
+    const { data, error } = await supabase.storage.from('files').list('', {
+      limit: 1000,
+    });
 
-      if (error) throw error;
-
-      setFolders(
-        data?.filter(item => item.metadata === null).map(item => item.name) || []
-      );
-      setError(null);
-    } catch (err) {
-      setError((err as Error).message || 'Failed to fetch folders');
+    if (error) {
+      setError(error.message);
+      return;
     }
+
+    setFolders(
+      data?.filter(item => item.metadata === null).map(item => item.name) || []
+    );
   };
 
-  /* -----------------------------
-     Fetch files in folder
-  ------------------------------ */
+  /* ---------------- Fetch files ---------------- */
   const fetchFilesInFolder = async (folder: string) => {
-    try {
-      const { data, error } = await supabase.storage
-        .from('files')
-        .list(folder, { limit: 1000 });
+    const { data, error } = await supabase.storage
+      .from('files')
+      .list(folder, { limit: 1000 });
 
-      if (error) throw error;
-
-      setBucketFiles(
-        data
-          ?.filter(item => item.metadata !== null && item.name !== '.keep')
-          .map(item => ({
-            name: item.name,
-            path: `${folder}/${item.name}`,
-          })) || []
-      );
-      setError(null);
-    } catch (err) {
-      setError((err as Error).message || 'Failed to fetch files');
+    if (error) {
+      setError(error.message);
+      return;
     }
+
+    setBucketFiles(
+      data
+        ?.filter(item => item.metadata && item.name !== '.keep' && item.name.split(".")[0] != "title")
+        .map(item => ({
+          name: item.name,
+          path: `${folder}/${item.name}`,
+        })) || []
+    );
   };
 
-  /* -----------------------------
-     Hooks (ALWAYS RUN)
-  ------------------------------ */
   useEffect(() => {
     fetchFolders();
   }, []);
 
   useEffect(() => {
-    selectedFolder
-      ? fetchFilesInFolder(selectedFolder)
-      : setBucketFiles([]);
+    if (selectedFolder) fetchFilesInFolder(selectedFolder);
+    else setBucketFiles([]);
   }, [selectedFolder]);
 
-  /* -----------------------------
-     Create folder
-  ------------------------------ */
+  /* ---------------- Create folder ---------------- */
   const handleCreateFolder = async () => {
-    if (!newFolder) {
-      setError('Folder name is required');
-      return;
-    }
+    if (!newFolder) return;
 
-    try {
-      const { error } = await supabase.storage
-        .from('files')
-        .upload(`${newFolder}/.keep`, new Blob(['']), { upsert: true });
+    const { error } = await supabase.storage
+      .from('files')
+      .upload(`${newFolder}/.keep`, new Blob(['']), { upsert: true });
 
-      if (error) throw error;
-
+    if (!error) {
       setNewFolder('');
       setMessage(`Folder "${newFolder}" created`);
-      setError(null);
       fetchFolders();
-    } catch (err) {
-      setError((err as Error).message || 'Failed to create folder');
     }
   };
 
-  /* -----------------------------
-     File select & drag/drop
-  ------------------------------ */
-  const handleFiles = (fileList: FileList) => {
-    setFiles(fileList);
+  /* ---------------- Upload ---------------- */
+  const handleFiles = (list: FileList) => {
+    setFiles(list);
     setFilePreviews(
-      Array.from(fileList).map(file => URL.createObjectURL(file))
+      Array.from(list).map(file => URL.createObjectURL(file))
     );
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) handleFiles(e.target.files);
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (e.dataTransfer.files) handleFiles(e.dataTransfer.files);
-  };
-
-  /* -----------------------------
-     Upload
-  ------------------------------ */
   const handleUpload = async () => {
-    if (!files || !selectedUploadFolder) {
-      setError('Select a folder and files first');
-      return;
+    if (!files || !selectedUploadFolder) return;
+
+    for (const file of Array.from(files)) {
+      await supabase.storage
+        .from('files')
+        .upload(`${selectedUploadFolder}/${file.name}`, file, {
+          upsert: true,
+        });
     }
 
-    try {
-      for (const file of Array.from(files)) {
-        const { error } = await supabase.storage
-          .from('files')
-          .upload(`${selectedUploadFolder}/${file.name}`, file, { upsert: true });
-
-        if (error) throw error;
-      }
-
-      setFiles(null);
-      setFilePreviews([]);
-      setMessage('Upload successful');
-      setError(null);
-      fetchFilesInFolder(selectedFolder);
-    } catch (err) {
-      setError((err as Error).message || 'Upload failed');
-    }
+    setFiles(null);
+    setFilePreviews([]);
+    setMessage('Upload successful');
+    fetchFilesInFolder(selectedFolder);
   };
 
-  /* -----------------------------
-     Delete file
-  ------------------------------ */
+  /* ---------------- Delete ---------------- */
   const handleDeleteFile = async (path: string) => {
-    try {
-      const { error } = await supabase.storage.from('files').remove([path]);
-      if (error) throw error;
-
-      setMessage('File deleted');
-      setError(null);
-      fetchFilesInFolder(selectedFolder);
-    } catch (err) {
-      setError((err as Error).message || 'Failed to delete file');
-    }
+    await supabase.storage.from('files').remove([path]);
+    fetchFilesInFolder(selectedFolder);
   };
 
-  /* -----------------------------
-     Delete folder
-  ------------------------------ */
   const handleDeleteFolder = async () => {
     if (!selectedFolder) return;
 
-    try {
-      const paths = bucketFiles.map(f => f.path);
-      paths.push(`${selectedFolder}/.keep`);
+    const paths = bucketFiles.map(f => f.path);
+    paths.push(`${selectedFolder}/.keep`);
 
-      const { error } = await supabase.storage.from('files').remove(paths);
-      if (error) throw error;
-
-      setSelectedFolder('');
-      setMessage(`Folder "${selectedFolder}" deleted`);
-      setError(null);
-      fetchFolders();
-    } catch (err) {
-      setError((err as Error).message || 'Failed to delete folder');
-    }
+    await supabase.storage.from('files').remove(paths);
+    setSelectedFolder('');
+    fetchFolders();
   };
 
-  /* -----------------------------
-     Render
-  ------------------------------ */
+  /* ---------------- Render ---------------- */
   return (
-    <div className="container" style={{ padding: '2rem' }}>
-      <h2>Admin File Manager</h2>
-
+    <div className="space-y-10">
       {/* Create Folder */}
-      <section>
-        <h3>Create Folder</h3>
-        <input
-          value={newFolder}
-          onChange={e => setNewFolder(e.target.value)}
-          placeholder="Folder name"
-        />
-        <button onClick={handleCreateFolder} className='btn'>Create</button>
+      <section className="rounded-xl border bg-white p-6 shadow-sm">
+        <h3 className="mb-4 text-lg font-semibold">Create Folder</h3>
+        <div className="flex gap-3">
+          <input
+            value={newFolder}
+            onChange={e => setNewFolder(e.target.value)}
+            placeholder="Folder name"
+            className="w-full rounded-lg border px-3 py-2"
+            maxLength={50}
+          />
+          <button
+            onClick={handleCreateFolder}
+            className="rounded-lg bg-black px-4 py-2 text-white"
+          >
+            Create
+          </button>
+        </div>
       </section>
 
       {/* Upload */}
-      <section style={{ marginTop: '2rem' }}>
-        <h3>Upload Files</h3>
+      <section className="rounded-xl border bg-white p-6 shadow-sm">
+        <h3 className="mb-4 text-lg font-semibold">Upload Files</h3>
 
         <select
+          className="mb-3 w-full rounded-lg border px-3 py-2"
           value={selectedUploadFolder}
           onChange={e => setSelectedUploadFolder(e.target.value)}
         >
           <option value="">Select folder</option>
           {folders.map(f => (
-            <option key={f} value={f}>{f}</option>
+            <option key={f}>{f}</option>
           ))}
         </select>
 
-        <input type="file" multiple onChange={handleFileChange} />
+        <input
+          type="file"
+          multiple
+          onChange={e => e.target.files && handleFiles(e.target.files)}
+        />
 
         <div
+          className="mt-4 rounded-xl border-2 border-dashed p-6 text-center text-sm text-gray-500"
           onDragOver={e => e.preventDefault()}
-          onDrop={handleDrop}
-          style={{
-            border: '2px dashed gray',
-            padding: '2rem',
-            marginTop: '1rem',
+          onDrop={e => {
+            e.preventDefault();
+            e.dataTransfer.files && handleFiles(e.dataTransfer.files);
           }}
         >
           Drag & drop files here
         </div>
 
         {filePreviews.length > 0 && (
-          <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+          <div className="mt-4 flex gap-3">
             {filePreviews.map((src, i) => (
-              <img key={i} src={src} style={{ width: 100 }} />
+              <Image
+                key={i}
+                src={src}
+                alt="preview"
+                width={80}
+                height={80}
+                className="rounded-lg object-cover"
+              />
             ))}
           </div>
         )}
 
-        <button onClick={handleUpload} style={{ marginTop: '1rem' }} className='btn'>
+        <button
+          onClick={handleUpload}
+          className="mt-4 rounded-lg bg-black px-4 py-2 text-white"
+        >
           Upload
         </button>
       </section>
 
-      {/* List / Delete */}
-      <section style={{ marginTop: '2rem' }}>
-        <h3>Manage Files</h3>
+      {/* Manage */}
+      <section className="rounded-xl border bg-white p-6 shadow-sm">
+        <h3 className="mb-4 text-lg font-semibold">Manage Files</h3>
 
         <select
+          className="mb-4 w-full rounded-lg border px-3 py-2"
           value={selectedFolder}
           onChange={e => setSelectedFolder(e.target.value)}
         >
           <option value="">Select folder</option>
           {folders.map(f => (
-            <option key={f} value={f}>{f}</option>
+            <option key={f}>{f}</option>
           ))}
         </select>
 
@@ -266,44 +227,55 @@ const FileManagerInner: React.FC = () => {
           <>
             <button
               onClick={handleDeleteFolder}
-              style={{ color: 'red', marginLeft: '1rem' }}
-              className='btn'
+              className="mb-4 rounded-lg border border-red-500 px-3 py-1 text-sm text-red-600"
             >
               Delete Folder
             </button>
 
-            <ul style={{ marginTop: '1rem' }}>
+            <div className="space-y-3 max-h-96 overflow-y-auto">
               {bucketFiles.map(file => (
-                <li key={file.path}>
-                  {file.name}
+                <div
+                  key={file.path}
+                  className="flex items-center justify-between rounded-lg border px-4 py-3"
+                >
+                  {/* 🔍 Preview */}
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 overflow-hidden rounded-lg border bg-gray-100">
+                      {isImage(file.name) ? (
+                        <Image
+                          src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/files/${file.path}`}
+                          alt={file.name}
+                          width={48}
+                          height={48}
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-xs text-gray-500">
+                          FILE
+                        </div>
+                      )}
+                    </div>
+
+                    <span className="max-w-[220px] truncate text-sm">
+                      {file.name}
+                    </span>
+                  </div>
+
                   <button
                     onClick={() => handleDeleteFile(file.path)}
-                    style={{ color: 'red', marginLeft: '1rem' }}
-                    className='btn'
+                    className="text-sm text-red-600 hover:underline"
                   >
                     Delete
                   </button>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           </>
         )}
       </section>
 
-      {/* Messages */}
-      {error && (
-        <p style={{ color: 'red', fontWeight: 'bold', marginTop: '1rem' }}>
-          {error}
-        </p>
-      )}
-
-      {message && (
-        <p style={{ color: 'green', fontWeight: 'bold', marginTop: '1rem' }}>
-          {message}
-        </p>
-      )}
+      {error && <p className="text-sm text-red-600">{error}</p>}
+      {message && <p className="text-sm text-green-600">{message}</p>}
     </div>
   );
-};
-
-export default FileManagerInner;
+}
