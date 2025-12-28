@@ -12,7 +12,7 @@ export default function About() {
     const fetchPhoto = async () => {
       const { data } = supabase.storage
         .from('files')
-        .getPublicUrl('photo2.jpeg');
+        .getPublicUrl('photo2.jpg');
 
       setPhotoUrl(data.publicUrl);
     };
