@@ -27,6 +27,7 @@ const Navbar: React.FC = () => {
             { name: 'Home', href: '/' },
             { name: 'Portfolio', href: '/portfolio' },
             { name: 'About', href: '/about' },
+            { name: 'Upload', href: '/upload' }
           ].map((link) => (
             <Link
               key={link.name}
