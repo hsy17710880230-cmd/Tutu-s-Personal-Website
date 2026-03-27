@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+:root {
+  --primary-color: #FFD1DC;
+  --secondary-color: #FFFDD0;
+  --text-color: #5D4037;
+  --accent-color: #B0E0E6;
+  --background-color: #FFF9F0;
+  --font-family: 'Nunito', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: var(--font-family);
+  background: linear-gradient(-45deg, #FFE5E5, #FFF0E5, #FFFACD, #FFE4F1, #E8F5E9);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  color: var(--text-color);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+body {
+  font-family: var(--font-schoolbell);
+}
