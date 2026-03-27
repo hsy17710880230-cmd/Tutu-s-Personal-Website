@@ -5,6 +5,7 @@ import HomeButton from "@/src/components/HomeButton";
 import DisplayGrid from "@/src/components/DisplayGrid";
 import { useEffect, useState } from "react";
 import { underline2Capitalized } from "@/src/lib/utils";
+import BackButton from "../BackButton";
 
 type Project = {
   title: string;
@@ -42,6 +43,7 @@ export default function ProjectPage({
   return (
     <div className="relative w-full min-h-screen flex flex-col">
       <HomeButton />
+      <BackButton />
 
       <div className="flex flex-1 flex-col items-center justify-center px-4 md:px-6 py-24">
         {/* Title */}

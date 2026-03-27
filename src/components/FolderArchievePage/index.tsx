@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import HomeButton from "@/src/components/HomeButton";
+import BackButton from "../BackButton";
 
 type FolderData = {
   folder: string;
@@ -32,6 +33,7 @@ export default function FolderArchivePage({
     <div className="relative w-full min-h-screen flex flex-col items-center pt-24 pb-20 px-4">
 
       <HomeButton />
+      <BackButton/>
 
       <div className="w-full max-w-7xl">
 

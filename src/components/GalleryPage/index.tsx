@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import HomeButton from "@/src/components/HomeButton";
+import BackButton from "../BackButton";
 import { underline2Capitalized } from "@/src/lib/utils";
 import DisplayGrid from "@/src/components/DisplayGrid";
 
@@ -47,6 +48,8 @@ export default function GalleryPage({
   return (
     <div className="relative w-full min-h-screen flex flex-col items-center pt-24 pb-20 px-4">
       <HomeButton />
+      <BackButton/>
+      
 
       {/* Title */}
       <div className="w-full max-w-7xl mb-12">
