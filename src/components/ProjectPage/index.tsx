@@ -6,6 +6,7 @@ import DisplayGrid from "@/src/components/DisplayGrid";
 import { useEffect, useState } from "react";
 import { underline2Capitalized } from "@/src/lib/utils";
 import BackButton from "../BackButton";
+import TitleWithNav from "../Title";
 
 type Project = {
   title: string;
@@ -42,16 +43,10 @@ export default function ProjectPage({
 
   return (
     <div className="relative w-full min-h-screen flex flex-col">
-      <HomeButton />
-      <BackButton />
+      <TitleWithNav project={page}/>
 
       <div className="flex flex-1 flex-col items-center justify-center px-4 md:px-6 py-24">
-        {/* Title */}
-        <div className="w-full max-w-7xl mb-10 md:mb-16">
-          <h1 className="text-3xl md:text-5xl font-bold text-center">
-            {underline2Capitalized(page)}
-          </h1>
-        </div>
+        
 
         {/* Content */}
         <div className="w-full max-w-7xl">

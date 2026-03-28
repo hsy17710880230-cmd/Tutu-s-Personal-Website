@@ -6,6 +6,7 @@ import HomeButton from "@/src/components/HomeButton";
 import BackButton from "../BackButton";
 import { underline2Capitalized } from "@/src/lib/utils";
 import DisplayGrid from "@/src/components/DisplayGrid";
+import TitleWithNav from "../Title";
 
 type ProjectData = {
   images: string[];
@@ -47,16 +48,17 @@ export default function GalleryPage({
 
   return (
     <div className="relative w-full min-h-screen flex flex-col items-center pt-24 pb-20 px-4">
-      <HomeButton />
+      {/* <HomeButton />
       <BackButton/>
       
 
-      {/* Title */}
       <div className="w-full max-w-7xl mb-12">
         <h1 className="text-3xl md:text-5xl font-bold text-center">
           {underline2Capitalized(project as string)}
         </h1>
-      </div>
+      </div> */}
+
+      <TitleWithNav project={project as string}/>
 
       {/* Masonry */}
       <div className="w-full max-w-7xl">

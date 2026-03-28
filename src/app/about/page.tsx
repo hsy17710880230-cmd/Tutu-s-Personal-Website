@@ -6,7 +6,7 @@ import FloatingSprite from "../../components/FloatingSprite";
 export default function AboutPage() {
   const router = useRouter()
   return (
-    <div className="relative w-full min-h-screen overflow-hidden flex items-center justify-center">
+    <div className="w-full fixed z-100 min-h-screen overflow-hidden flex items-center justify-center">
       
       {/* Top Left Sprite */}
       <FloatingSprite
@@ -20,12 +20,13 @@ export default function AboutPage() {
 
       {/* Bottom Right Sprite */}
       <FloatingSprite
-        x={1900}
-        y={1354}
+        x={2250}
+        y={1450}
         spriteW={540}
         spriteH={540}
         img_path="/assets/about/badge.png"
-        rotation={30}
+        rotation={40}
+        zIndex={-100}
         // onClick={() => console.log("Bottom right sprite")}
       />
 

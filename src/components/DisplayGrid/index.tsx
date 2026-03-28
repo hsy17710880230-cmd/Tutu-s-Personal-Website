@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 export type DisplayGridProps = {
   title?: string;
   img_path: string;
@@ -37,16 +39,28 @@ export default function DisplayGrid({
               ? { width: displaySize, height: displaySize }
               : { width: displaySize }
           }
-          className="rounded-xl overflow-hidden"
+          className={`rounded-xl overflow-hidden${crop ? " relative" : ""}`}
         >
-          <img
-            src={img_path}
-            alt={title ?? ""}
-            className={`w-full ${
-              crop ? "h-full object-cover" : "h-auto object-contain"
-            } ${imgClass}`}
-            draggable={false}
-          />
+          {crop ? (
+            <Image
+              src={img_path}
+              alt={title ?? ""}
+              fill
+              className={`object-cover ${imgClass}`}
+              draggable={false}
+              sizes={`${displaySize}px`}
+            />
+          ) : (
+            <Image
+              src={img_path}
+              alt={title ?? ""}
+              width={800}
+              height={600}
+              className={`w-full h-auto object-contain ${imgClass}`}
+              draggable={false}
+              sizes={`${displaySize}px`}
+            />
+          )}
         </div>
 
         {title && (

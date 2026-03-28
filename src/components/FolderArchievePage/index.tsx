@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import HomeButton from "@/src/components/HomeButton";
-import BackButton from "../BackButton";
+import TitleWithNav from "../Title";
 
 type FolderData = {
   folder: string;
@@ -32,16 +31,12 @@ export default function FolderArchivePage({
   return (
     <div className="relative w-full min-h-screen flex flex-col items-center pt-24 pb-20 px-4">
 
-      <HomeButton />
-      <BackButton/>
+      {/* <HomeButton />
+      <BackButton/> */}
+      <TitleWithNav project={page}/>
+      
 
       <div className="w-full max-w-7xl">
-
-        {/* Page page */}
-        <h1 className="text-3xl md:text-5xl font-bold text-center mb-16">
-          {page}
-        </h1>
-
         {data.map((section) => (
           <div key={section.folder} className="mb-20">
 
