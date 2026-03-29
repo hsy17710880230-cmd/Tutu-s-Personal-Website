@@ -47,13 +47,13 @@ const Home = () => {
       zIndex: 15
     },
     {
-      // this is wrong, but it doesnt matter so I'll just put it here
+      // the hitbox pos is wrong, but it doesnt matter so I'll just put it here
       hitboxX: 1920,
       hitboxY: 780,
       hitboxW: 554,
       hitboxH: 353,
       src: "/assets/homepage/dialog.png",
-      zIndex: 30,
+      zIndex: 50,
       onClick: () => setShowDialog(false),
     },
     {
@@ -118,7 +118,7 @@ const Home = () => {
 
       {/* Background Fixed */}
       <div
-        className="fixed inset-0 z-10 bg-cover bg-no-repeat"
+        className="fixed inset-0 z-1 bg-cover bg-no-repeat"
         style={{
           backgroundImage: "url('/assets/homepage/bg.png')",
           // backgroundPosition: "center 5%",
