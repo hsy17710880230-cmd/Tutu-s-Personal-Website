@@ -1,5 +1,6 @@
-/* ─── Loose Sprite (arbitrary size, positioned in image-space) ─── */
+"use client";
 
+import Image from "next/image";
 import { useBackgroundCover } from "@/src/lib/utils";
 import { motion, TargetAndTransition } from "framer-motion";
 
@@ -74,14 +75,13 @@ export function LooseSprite({
         cursor: onClick ? "pointer" : "default",
       }}
     >
-      <img
+      <Image
         src={src}
         alt={alt}
-        aria-hidden={!alt}
+        fill
+        style={{ objectFit: "contain", pointerEvents: "none", userSelect: "none" }}
+        priority={priority}
         draggable={false}
-        loading={priority ? "eager" : "lazy"}
-        decoding="async"
-        className="w-full h-full object-contain pointer-events-none select-none"
       />
       {children}
     </motion.button>

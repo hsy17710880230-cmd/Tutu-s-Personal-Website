@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { FloatingSprite, FloatingSpriteProps } from "@/src/components/Sprites/FloatingSprite";
 import { useState } from "react";
 import { ContactTooltip } from "../components/ContactTooltip";
+import Image from "next/image";
 
 const Home = () => {
   const router = useRouter();
@@ -132,10 +133,11 @@ const Home = () => {
             className="bg-white rounded-2xl p-6 flex flex-col items-center gap-3"
             onClick={(e) => e.stopPropagation()}
           >
-            <img
+            <Image
               src="/assets/homepage/wechat-qr.png"
               alt="WeChat QR Code"
-              className="w-48 h-48"
+              width={192}
+              height={192}
             />
             <p className="text-sm text-gray-600">Scan to add on WeChat</p>
             <p className="text-sm text-gray-600">WeChat id: qcm17710880230</p>
