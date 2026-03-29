@@ -108,7 +108,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="relative w-full min-h-screen overflow-hidden">
+    <div className="relative w-full min-h-screen overflow-hidden white-bg">
       {/* Sprites Navigator */}
       {SPRITES.map((it, i) => {
         if (it.src === "/assets/homepage/dialog.png" && !showDialog) return null;
@@ -117,7 +117,7 @@ const Home = () => {
 
       {/* Background Fixed */}
       <div
-        className="fixed inset-0 -z-10 bg-cover bg-no-repeat"
+        className="fixed inset-0 z-10 bg-cover bg-no-repeat"
         style={{
           backgroundImage: "url('/assets/homepage/bg.png')",
           // backgroundPosition: "center 5%",
@@ -133,11 +133,10 @@ const Home = () => {
             className="bg-white rounded-2xl p-6 flex flex-col items-center gap-3"
             onClick={(e) => e.stopPropagation()}
           >
-            <Image
+            <img
               src="/assets/homepage/wechat-qr.png"
               alt="WeChat QR Code"
-              width={192}
-              height={192}
+              className="w-48 h-48"
             />
             <p className="text-sm text-gray-600">Scan to add on WeChat</p>
             <p className="text-sm text-gray-600">WeChat id: qcm17710880230</p>

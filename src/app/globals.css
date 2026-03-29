@@ -15,16 +15,16 @@ body {
   overflow-x: hidden;
 }
 
-/* body::before {
+body::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: -1000;
+  z-index: -1;
 
   background: linear-gradient(-45deg, #FFE5E5, #FFF0E5, #FFFACD, #FFE4F1, #E8F5E9);
   background-size: 200% 200%;
   animation: gradientShift 15s ease infinite;
-} */
+}
 
 
 /* Use dynamic viewport height */
@@ -35,12 +35,12 @@ body {
   line-height: 1.6;
 
   /* gradient background */
-  background: #FFFFFF;
+  background: linear-gradient(-45deg, #FFE5E5, #FFF0E5, #FFFACD, #FFE4F1, #E8F5E9);
   background-size: 200% 200%; /* smoother animation */
   background-attachment: fixed; /* prevents scroll over top */
-  /* animation: gradientShift 15s ease infinite; */
+  animation: gradientShift 15s ease infinite;
 }
-/* 
+
 @keyframes gradientShift {
   0% {
     background-position: 0% 50%;
@@ -51,9 +51,13 @@ body {
   100% {
     background-position: 0% 50%;
   }
-} */
+}
 
 /* If you're using another font variable */
 body {
   font-family: var(--font-schoolbell, var(--font-family));
+}
+.white-bg {
+  background: #ffffff !important;
+  animation: none !important;
 }
