@@ -44,6 +44,7 @@ const Home = () => {
       hitboxH: 1200,
       src: "/assets/homepage/illustration.png",
       onClick: () => {router.push("/illustration")},
+      zIndex: 15
     },
     {
       // this is wrong, but it doesnt matter so I'll just put it here

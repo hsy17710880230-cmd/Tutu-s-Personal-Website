@@ -3,8 +3,12 @@ import { useRouter } from "next/navigation"
 
 export default function TitleWithNav({
   project,
+  backImg = "/assets/back.png",
+  homeImg = "/assets/home.png",
 }: {
-  project: string
+  project: string,
+  backImg?: string,
+  homeImg?: string
 }) {
   const router = useRouter()
 
@@ -18,7 +22,7 @@ export default function TitleWithNav({
             className="animate-float transition-transform hover:scale-105"
           >
             <img
-              src="/assets/back.png"
+              src={backImg || "/assets/back.png"}
               alt="Back"
               draggable={false}
               className="w-[110px] sm:w-[150px] md:w-[200px] lg:w-[240px]"
@@ -38,7 +42,7 @@ export default function TitleWithNav({
             className="animate-float transition-transform hover:scale-105"
           >
             <img
-              src="/assets/home.png"
+              src={homeImg || "/assets/home.png"}
               alt="Home"
               draggable={false}
               className="w-[110px] sm:w-[150px] md:w-[200px] lg:w-[240px]"
