@@ -1,11 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import HomeButton from "@/src/components/HomeButton";
 import DisplayGrid from "@/src/components/DisplayGrid";
 import { useEffect, useState } from "react";
 import { underline2Capitalized } from "@/src/lib/utils";
-import BackButton from "../BackButton";
 import TitleWithNav from "../Title";
 
 type Project = {

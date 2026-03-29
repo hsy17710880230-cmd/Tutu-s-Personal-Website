@@ -2,9 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import HomeButton from "@/src/components/HomeButton";
-import BackButton from "../BackButton";
-import { underline2Capitalized } from "@/src/lib/utils";
 import DisplayGrid from "@/src/components/DisplayGrid";
 import TitleWithNav from "../Title";
 
@@ -15,11 +12,9 @@ type ProjectData = {
 export default function GalleryPage({
   page,
   api,
-  title,
 }: {
   page: string;
   api?: string;
-  title?: boolean;
 }) {
   const { project } = useParams();
 

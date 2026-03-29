@@ -19,12 +19,15 @@ export function SceneContainer({
 }
 
 export function CoverLayer({
+  x = 0,
+  y = 0,
   src,
   alt = "",
   zIndex = 0,
   fix,
   className = "",
 }: {
+  x?: number;y?: number;
   src: string;
   alt?: string;
   zIndex?: number;
@@ -43,7 +46,7 @@ export function CoverLayer({
       style={{
         width: IMG_W * scale,
         height: IMG_H * scale,
-        transform: `translate(${offsetX}px, ${offsetY}px)`,
+        transform: `translate(${offsetX + (x ?? 0)}px, ${offsetY + (y ?? 0)}px)`,
         zIndex,
         visibility: ready ? "visible" : "hidden",
       }}
@@ -52,6 +55,8 @@ export function CoverLayer({
 }
 
 export type FloatingSpriteProps = {
+  x?: number;
+  y?: number;
   src: string;
   alt?: string;
 
@@ -74,6 +79,8 @@ export type FloatingSpriteProps = {
 };
 
 export default function FloatingSprite({
+  x = 0,
+  y = 0,
   src,
   alt = "",
   hitboxX,
@@ -102,8 +109,8 @@ export default function FloatingSprite({
   const imgH = IMG_H * scale;
 
   // Hitbox center in screen-space
-  const pivotScreenX = screenX + screenW / 2;
-  const pivotScreenY = screenY + screenH / 2;
+  const pivotScreenX = screenX + screenW / 2 + (x??0);
+  const pivotScreenY = screenY + screenH / 2 + (y??0);
 
   // Transform origin as pixel values relative to the wrapper's top-left (0,0)
   // The wrapper is fixed at 0,0 and sized to the viewport,

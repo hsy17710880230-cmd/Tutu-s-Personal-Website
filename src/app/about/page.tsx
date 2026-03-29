@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import FloatingSprite from "../../components/FloatingSprite";
+import LooseSprite from "../../components/LooseSprite";
 
 export default function AboutPage() {
   const router = useRouter()
@@ -9,39 +9,39 @@ export default function AboutPage() {
     <div className="w-full fixed z-100 min-h-screen overflow-hidden flex items-center justify-center">
       
       {/* Top Left Sprite */}
-      <FloatingSprite
-        x={500}
-        y={500}
-        spriteW={540}
-        spriteH={540}
-        img_path="/assets/about/rabbit.png"
+      <LooseSprite
+        imgX={500}
+        imgY={500}
+        imgW={540}
+        imgH={540}
+        src="/assets/about/rabbit.png"
         // onClick={() => console.log("Top left sprite")}
       />
 
       {/* Bottom Right Sprite */}
-      <FloatingSprite
-        x={2250}
-        y={1450}
-        spriteW={540}
-        spriteH={540}
-        img_path="/assets/about/badge.png"
+      <LooseSprite
+        imgX={2250}
+        imgY={1450}
+        imgW={540}
+        imgH={540}
+        src="/assets/about/badge.png"
         rotation={40}
         zIndex={-100}
         // onClick={() => console.log("Bottom right sprite")}
       />
 
-      <FloatingSprite
-        x={1900}
-        y={500}
-        spriteH={360}
-        spriteW={360}
-        img_path="/assets/home.png"
+      <LooseSprite
+        imgX={1900}
+        imgY={500}
+        imgH={360}
+        imgW={360}
+        src="/assets/home.png"
         onClick={() => router.push("/")}
-        hoverEffect="hover:scale-105"
+        whileHover={ { scale: 1.05 } }
       />
 
       {/* Center Content */}
-      <div className="relative z-10 max-w-3xl text-center space-y-12 px-6">
+      <div className="relative z-10 max-w-3xl text-center space-imgY-12 px-6">
         <section>
           <h1 className="text-2xl md:text-4xl font-bold mb-4">About Me:</h1>
           <p className="text-lg md:text-2xl leading-relaxed">
