@@ -1,16 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 
 export type DisplayGridProps = {
   title?: string;
   img_path: string;
-
   onClick?: () => void;
-
   hoverEffect?: string;
   imgClass?: string;
-
   displaySize?: number;
   crop?: boolean;
 };
@@ -24,6 +22,8 @@ export default function DisplayGrid({
   displaySize = 256,
   crop = true,
 }: DisplayGridProps) {
+  const [isLoading, setIsLoading] = useState(true);
+
   return (
     <div
       onClick={onClick}
@@ -39,16 +39,24 @@ export default function DisplayGrid({
               ? { width: displaySize, height: displaySize }
               : { width: displaySize }
           }
-          className={`rounded-xl overflow-hidden${crop ? " relative" : ""}`}
+          className={`rounded-xl overflow-hidden relative`}
         >
+          {/* Skeleton placeholder */}
+          {isLoading && (
+            <div
+              className={`absolute inset-0 animate-pulse bg-gray-300 dark:bg-gray-700`}
+            />
+          )}
+
           {crop ? (
             <Image
               src={img_path}
               alt={title ?? ""}
               fill
-              className={`object-cover ${imgClass}`}
+              className={`object-cover ${imgClass} ${isLoading ? "opacity-0" : "opacity-100"} transition-opacity`}
               draggable={false}
               sizes={`${displaySize}px`}
+              onLoadingComplete={() => setIsLoading(false)}
             />
           ) : (
             <Image
@@ -56,16 +64,15 @@ export default function DisplayGrid({
               alt={title ?? ""}
               width={800}
               height={600}
-              className={`w-full h-auto object-contain ${imgClass}`}
+              className={`w-full h-auto object-contain ${imgClass} ${isLoading ? "opacity-0" : "opacity-100"} transition-opacity`}
               draggable={false}
               sizes={`${displaySize}px`}
+              onLoadingComplete={() => setIsLoading(false)}
             />
           )}
         </div>
 
-        {title && (
-          <p className="text-center text-lg font-medium">{title}</p>
-        )}
+        {title && <p className="text-center text-lg font-medium">{title}</p>}
       </div>
     </div>
   );

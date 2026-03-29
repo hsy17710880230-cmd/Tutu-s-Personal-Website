@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import TitleWithNav from "../Title";
+import DisplayGrid from "../DisplayGrid";
 
 type FolderData = {
   folder: string;
@@ -49,23 +50,22 @@ export default function FolderArchivePage({
               <div className="flex-1 h-[3px] bg-gradient-to-r from-pink-300 via-yellow-200 to-blue-200 rounded-full"></div>
             </div>
 
+
             {/* Waterfall Layout */}
             <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6 space-y-6">
               {section.images.map((src, i) => (
-                <div
+                <DisplayGrid
                   key={i}
-                  className="break-inside-avoid overflow-hidden rounded-2xl cursor-zoom-in bg-white/40 backdrop-blur-sm shadow-portfolio"
+                  img_path={src}
                   onClick={() => setZoomedImage(src)}
-                >
-                  <img
-                    src={src}
-                    alt=""
-                    className="w-full h-auto object-contain hover:scale-[1.02] transition-transform"
-                    draggable={false}
-                  />
-                </div>
+                  crop={false} // keeps your original object-contain style
+                  displaySize={300} // adjust as needed for waterfall layout
+                  hoverEffect="hover:scale-[1.02]"
+                  imgClass="transition-transform"
+                />
               ))}
             </div>
+
 
           </div>
         ))}
