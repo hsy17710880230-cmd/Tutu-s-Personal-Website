@@ -111,7 +111,7 @@ const Home = () => {
       {/* Sprites Navigator */}
       {SPRITES.map((it, i) => {
         if (it.src === "/assets/homepage/dialog.png" && !showDialog) return null;
-        return <FloatingSprite key={i} {...it} debug={false} />;
+        return <FloatingSprite key={i} {...it} debug={false} priority={true}/>;
       })}
 
       {/* Background Fixed */}
