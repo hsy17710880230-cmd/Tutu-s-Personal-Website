@@ -1,8 +1,9 @@
+/* ─── Loose Sprite (arbitrary size, positioned in image-space) ─── */
+
 import { useBackgroundCover } from "@/src/lib/utils";
 import { motion, TargetAndTransition } from "framer-motion";
 
 export type LooseSpriteProps = {
-  /** Position and size in image-space */
   imgX: number;
   imgY: number;
   imgW: number;
@@ -14,6 +15,7 @@ export type LooseSpriteProps = {
   rotation?: number;
   zIndex?: number;
   debug?: boolean;
+  priority?: boolean;
   fix?: { x: number; y: number; scale?: number };
 
   whileHover?: TargetAndTransition;
@@ -26,7 +28,7 @@ export type LooseSpriteProps = {
   children?: React.ReactNode;
 };
 
-export default function LooseSprite({
+export function LooseSprite({
   imgX,
   imgY,
   imgW,
@@ -36,12 +38,14 @@ export default function LooseSprite({
   rotation = 0,
   zIndex = 10,
   debug = false,
+  priority = false,
   fix,
   whileHover = { scale: 1.05 },
   whileTap = { scale: 0.95 },
   onClick,
   onHover,
   onHoverEnd,
+  children,
 }: LooseSpriteProps) {
   const { scale, offsetX, offsetY, ready } = useBackgroundCover(fix);
 
@@ -60,6 +64,7 @@ export default function LooseSprite({
         height: imgH * scale,
         transform: `rotate(${rotation}deg)`,
         transformOrigin: "center center",
+        willChange: "transform",
         zIndex,
         visibility: ready ? "visible" : "hidden",
         background: debug ? "rgba(255,0,0,0.2)" : "transparent",
@@ -74,8 +79,11 @@ export default function LooseSprite({
         alt={alt}
         aria-hidden={!alt}
         draggable={false}
+        loading={priority ? "eager" : "lazy"}
+        decoding="async"
         className="w-full h-full object-contain pointer-events-none select-none"
       />
+      {children}
     </motion.button>
   );
 }

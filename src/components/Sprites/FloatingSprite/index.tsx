@@ -1,62 +1,12 @@
-"use client";
 
-import { useState, useLayoutEffect, useCallback } from "react";
-import { motion, useAnimation, TargetAndTransition } from "framer-motion";
-import { IMG_H, IMG_W, useBackgroundCover } from "@/src/lib/utils";
+/* ─── Floating Sprite (fullscreen image-space layer) ─── */
 
-export function SceneContainer({
-  children,
-  bgColor = "#000000",
-}: {
-  children: React.ReactNode;
-  bgColor?: string;
-}) {
-  return (
-    <div className="fixed inset-0" style={{ backgroundColor: bgColor }}>
-      {children}
-    </div>
-  );
-}
-
-export function CoverLayer({
-  x = 0,
-  y = 0,
-  src,
-  alt = "",
-  zIndex = 0,
-  fix,
-  className = "",
-}: {
-  x?: number;y?: number;
-  src: string;
-  alt?: string;
-  zIndex?: number;
-  fix?: { x: number; y: number; scale?: number };
-  className?: string;
-}) {
-  const { scale, offsetX, offsetY, ready } = useBackgroundCover(fix);
-
-  return (
-    <img
-      src={src}
-      alt={alt}
-      aria-hidden={!alt}
-      draggable={false}
-      className={`fixed top-0 left-0 pointer-events-none select-none ${className}`}
-      style={{
-        width: IMG_W * scale,
-        height: IMG_H * scale,
-        transform: `translate(${offsetX + (x ?? 0)}px, ${offsetY + (y ?? 0)}px)`,
-        zIndex,
-        visibility: ready ? "visible" : "hidden",
-      }}
-    />
-  );
-}
+import { IMG_W, IMG_H } from "@/src/lib/utils";
+import { motion, TargetAndTransition, useAnimation } from "framer-motion";
+import { useCallback } from "react";
+import { useBackgroundCover } from "..";
 
 export type FloatingSpriteProps = {
-  x?: number;
-  y?: number;
   src: string;
   alt?: string;
 
@@ -68,6 +18,7 @@ export type FloatingSpriteProps = {
   rotation?: number;
   zIndex?: number;
   debug?: boolean;
+  priority?: boolean;
   fix?: { x: number; y: number; scale?: number };
 
   whileHover?: TargetAndTransition;
@@ -77,10 +28,7 @@ export type FloatingSpriteProps = {
   onHover?: () => void;
   onHoverEnd?: () => void;
 };
-
-export default function FloatingSprite({
-  x = 0,
-  y = 0,
+export function FloatingSprite({
   src,
   alt = "",
   hitboxX,
@@ -90,6 +38,7 @@ export default function FloatingSprite({
   rotation = 0,
   zIndex = 10,
   debug = false,
+  priority = false,
   fix,
   whileHover = { scale: 1.05 },
   whileTap = { scale: 0.95 },
@@ -108,14 +57,10 @@ export default function FloatingSprite({
   const imgW = IMG_W * scale;
   const imgH = IMG_H * scale;
 
-  // Hitbox center in screen-space
-  const pivotScreenX = screenX + screenW / 2 + (x??0);
-  const pivotScreenY = screenY + screenH / 2 + (y??0);
-
-  // Transform origin as pixel values relative to the wrapper's top-left (0,0)
-  // The wrapper is fixed at 0,0 and sized to the viewport,
-  // so screen coords are directly usable
-  const originPx = `${pivotScreenX}px ${pivotScreenY}px`;
+  // Hitbox center in screen-space — used as transform origin
+  // on the viewport-sized wrapper so scale radiates from the sprite
+  const pivotScreenX = screenX + screenW / 2;
+  const pivotScreenY = screenY + screenH / 2;
 
   const handleHoverStart = useCallback(() => {
     spriteControls.start(whileHover);
@@ -131,23 +76,24 @@ export default function FloatingSprite({
     spriteControls.start(whileTap);
   }, [spriteControls, whileTap]);
 
-  const handleTap = useCallback(() => {
+  const handleTapEnd = useCallback(() => {
     spriteControls.start({ scale: 1 });
   }, [spriteControls]);
 
   return (
     <>
       {/*
-        Wrapper div: fixed at 0,0, covers full viewport.
-        transformOrigin is the hitbox center in screen-space.
-        When Framer scales this div, it zooms from the hitbox pivot
-        but the image inside stays at its normal fullscreen position.
+        Viewport-sized wrapper handles the scale animation.
+        transformOrigin is the hitbox center in screen coords.
+        The image inside is positioned with plain CSS — no Framer
+        involvement — so it never drifts.
       */}
       <motion.div
         animate={spriteControls}
-        className="fixed top-0 left-0 w-screen h-screen pointer-events-none"
+        className="fixed top-0 left-0 w-screen h-screen pointer-events-none overflow-hidden"
         style={{
-          transformOrigin: originPx,
+          transformOrigin: `${pivotScreenX}px ${pivotScreenY}px`,
+          willChange: "transform",
           zIndex,
           visibility: ready ? "visible" : "hidden",
         }}
@@ -157,6 +103,8 @@ export default function FloatingSprite({
           alt={alt}
           aria-hidden={!alt}
           draggable={false}
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
           className="absolute top-0 left-0 select-none"
           style={{
             width: imgW,
@@ -172,8 +120,8 @@ export default function FloatingSprite({
         onHoverStart={handleHoverStart}
         onHoverEnd={handleHoverEnd}
         onTapStart={handleTapStart}
-        onTap={handleTap}
-        onTapCancel={handleTap}
+        onTap={handleTapEnd}
+        onTapCancel={handleTapEnd}
         className="fixed outline-none"
         style={{
           left: screenX,
@@ -194,3 +142,4 @@ export default function FloatingSprite({
     </>
   );
 }
+

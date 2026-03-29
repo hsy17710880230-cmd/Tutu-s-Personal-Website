@@ -43,7 +43,7 @@ export default function ProjectPage({
     <div className="relative w-full min-h-screen flex flex-col">
       <TitleWithNav project={page}/>
 
-      <div className="flex flex-1 flex-col items-center justify-center px-4 md:px-6 py-24">
+      <div className="flex flex-1 flex-col items-center justify-center px-4 md:px-6">
         
 
         {/* Content */}

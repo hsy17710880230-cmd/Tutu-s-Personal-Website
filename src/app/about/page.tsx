@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import LooseSprite from "../../components/LooseSprite";
+import { LooseSprite } from "@/src/components/Sprites/LooseSprite";
 
 export default function AboutPage() {
   const router = useRouter()

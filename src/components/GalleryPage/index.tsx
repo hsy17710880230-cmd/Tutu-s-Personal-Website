@@ -42,7 +42,7 @@ export default function GalleryPage({
   if (!data) return null;
 
   return (
-    <div className="relative w-full min-h-screen flex flex-col items-center pt-24 pb-20 px-4">
+    <div className="relative w-full min-h-screen flex flex-col items-center">
       {/* <HomeButton />
       <BackButton/>
       

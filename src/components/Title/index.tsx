@@ -9,7 +9,7 @@ export default function TitleWithNav({
   const router = useRouter()
 
   return (
-    <div className="w-full max-w-7xl mb-10 md:mb-12 px-3 sm:px-6">
+    <div className="w-full max-w-7xl mx-auto">
       <div className="grid grid-cols-3 items-center">
         {/* Back */}
         <div className="flex justify-start">
@@ -21,14 +21,14 @@ export default function TitleWithNav({
               src="/assets/back.png"
               alt="Back"
               draggable={false}
-              className="w-[120px] sm:w-[160px] md:w-[220px] lg:w-[280px]"
+              className="w-[110px] sm:w-[150px] md:w-[200px] lg:w-[240px]"
             />
           </button>
         </div>
 
         {/* Title */}
-        <h1 className="text-center font-bold text-xl sm:text-2xl md:text-4xl lg:text-5xl px-2 leading-tight">
-          {underline2Capitalized(project as string)}
+        <h1 className="text-center font-bold text-xl sm:text-2xl md:text-4xl lg:text-5xl leading-tight px-2">
+          {underline2Capitalized(project)}
         </h1>
 
         {/* Home */}
@@ -41,7 +41,7 @@ export default function TitleWithNav({
               src="/assets/home.png"
               alt="Home"
               draggable={false}
-              className="w-[120px] sm:w-[160px] md:w-[220px] lg:w-[280px]"
+              className="w-[110px] sm:w-[150px] md:w-[200px] lg:w-[240px]"
             />
           </button>
         </div>

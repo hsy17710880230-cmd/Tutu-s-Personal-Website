@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import FloatingSprite, { FloatingSpriteProps } from "../components/FloatingSprite";
+import { FloatingSprite, FloatingSpriteProps } from "@/src/components/Sprites/FloatingSprite";
 import { useState } from "react";
 import { ContactTooltip } from "../components/ContactTooltip";
 
