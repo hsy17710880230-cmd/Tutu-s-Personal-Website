@@ -1,33 +1,52 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { supabase } from "@/src/lib/supabase"; // adjust path if needed
 
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ project: string }> }
 ) {
-  const p = await params
+  const p = await params;
   const project = p.project;
-  const folder = path.join(process.cwd(), "public/assets/work", project);
+  const folder = `work/${project}`;
 
   try {
-    const files = fs.readdirSync(folder);
+    const { data, error } = await supabase.storage
+      .from("arts")
+      .list(folder, { limit: 1000 });
 
-    const images = files
-      .filter((f) => f.endsWith(".png"))
-      .filter((f) => f != "title.png")
+    if (error || !data) {
+      throw error;
+    }
+
+    const images = data
+      .filter((f) => f.name.endsWith(".png"))
+      .filter((f) => f.name !== "title.png")
       .sort((a, b) => {
-        const na = parseInt(a);
-        const nb = parseInt(b);
+        const na = parseInt(a.name);
+        const nb = parseInt(b.name);
         return na - nb;
       })
-      .map((file) => `/assets/work/${project}/${file}`);
+      .map((file) => {
+        const { data: url } = supabase.storage
+          .from("arts")
+          .getPublicUrl(`${folder}/${file.name}`);
 
+        return url.publicUrl;
+      });
+
+    // Load description.txt if it exists
     let description = "";
-    const descPath = path.join(folder, "description.txt");
+    const descFile = data.find((f) => f.name === "description.txt");
 
-    if (fs.existsSync(descPath)) {
-      description = fs.readFileSync(descPath, "utf-8");
+    if (descFile) {
+      const { data: fileData, error: downloadError } =
+        await supabase.storage
+          .from("arts")
+          .download(`${folder}/description.txt`);
+
+      if (!downloadError && fileData) {
+        description = await fileData.text();
+      }
     }
 
     return NextResponse.json({

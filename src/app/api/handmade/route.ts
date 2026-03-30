@@ -1,20 +1,32 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { supabase } from "@/src/lib/supabase"; // adjust path if needed
 
 export async function GET() {
-  const workFolder = path.join(process.cwd(), "public/assets/handmade");
+  const folder = "handmade";
 
   try {
-    const files = fs.readdirSync(workFolder);
+    const { data, error } = await supabase.storage
+      .from("arts")
+      .list(folder, { limit: 1000 });
 
-    const projects = files.map((folder) => ({
-      title: folder,
-      img_path: `/assets/handmade/${folder}/title.png`,
-    }));
+    if (error || !data) {
+      throw error;
+    }
+
+    const baseUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/arts`;
+
+    const projects = data
+      .filter((item) => item.id === null) // folders only
+      .map((folder) => ({
+        title: folder.name,
+        img_path: `${baseUrl}/handmade/${folder.name}/title.png`,
+      }));
 
     return NextResponse.json(projects);
   } catch (err) {
-    return NextResponse.json({ error: "Failed to read projects" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to read projects" },
+      { status: 500 }
+    );
   }
 }

@@ -78,7 +78,7 @@ const Home = () => {
       hitboxY: 1700,
       hitboxW: 350,
       hitboxH: 400,
-      src: "/assets/homepage/wechat.png",
+      src: "/assets/homepage/wechat-text.png",
       onHover: () => setShowWeChatDetails(true),
       onHoverEnd: () => setShowWeChatDetails(false),
       onClick: () => setShowWeChatQR(true),
@@ -88,7 +88,7 @@ const Home = () => {
       hitboxY: 1760,
       hitboxW: 250,
       hitboxH: 300,
-      src: "/assets/homepage/ins.png",
+      src: "/assets/homepage/ins-text.png",
       onHover: () => setShowInsDetails(true),
       onHoverEnd: () => setShowInsDetails(false),
       onClick: () => window.open("https://instagram.com/tutushiyun", "_blank"),
@@ -100,7 +100,7 @@ const Home = () => {
       hitboxH: 150,
       onHover: () => setShowEmailDetails(true),
       onHoverEnd: () => setShowEmailDetails(false),
-      src: "/assets/homepage/email.png",
+      src: "/assets/homepage/email-text.png",
       onClick: () => window.open(
         `https://outlook.office.com/mail/deeplink/compose?to=Hsy17710880230@163.com`,
         "_blank"
@@ -135,7 +135,7 @@ const Home = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <img
-              src="/assets/homepage/wechat-qr.png"
+              src="/assets/qr.png"
               alt="WeChat QR Code"
               className="w-48 h-48"
             />

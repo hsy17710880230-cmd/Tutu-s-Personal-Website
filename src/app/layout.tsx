@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Fredoka, Schoolbell } from "next/font/google";
 
 import "./globals.css";
 import LandscapeGuard from "../components/LandScapeGuard";
+// import { AuthProvider } from "../components/AuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,6 +45,7 @@ export default function RootLayout({
       className={`h-full ${geistSans.variable} ${geistMono.variable} ${fredoka.variable} ${schoolbell.variable}`}
     >
       <body className="h-full antialiased font-body">
+        {/* <AuthProvider> */}
         <LandscapeGuard>
           <div className="flex h-full flex-col">
             <main className="flex flex-1 flex-col items-center justify-center">
@@ -51,6 +53,7 @@ export default function RootLayout({
             </main>
           </div>
         </LandscapeGuard>
+        {/* </AuthProvider> */}
       </body>
     </html>
   );

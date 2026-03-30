@@ -1,33 +1,43 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { supabase } from "@/src/lib/supabase"; // adjust path if needed
 
 export async function GET() {
-  const baseFolder = path.join(process.cwd(), "public/assets/illustration");
+  const root = "illustration";
 
   try {
-    const folders = fs
-      .readdirSync(baseFolder, { withFileTypes: true })
-      .filter((dirent) => dirent.isDirectory())
-      .map((dirent) => dirent.name);
+    const { data: folders, error } = await supabase.storage
+      .from("arts")
+      .list(root, { limit: 1000 });
 
-    const folderData = folders.map((folder) => {
-      const folderPath = path.join(baseFolder, folder);
+    if (error || !folders) {
+      throw error;
+    }
 
-      const images = fs
-        .readdirSync(folderPath)
-        .filter((file) =>
-          /\.(png)$/i.test(file)
-        )
-        .map((file) => `/assets/illustration/${folder}/${file}`);
+    const baseUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/arts`;
 
-      return {
-        folder,
-        images,
-      };
-    });
+    const folderData = await Promise.all(
+      folders
+        .filter((item) => item.id === null) // folders only
+        .map(async (folder) => {
+          const { data: files } = await supabase.storage
+            .from("arts")
+            .list(`${root}/${folder.name}`, { limit: 1000 });
 
-    // optional sorting (works for years OR names)
+          const images =
+            files
+              ?.filter((file) => /\.(png)$/i.test(file.name))
+              .map(
+                (file) =>
+                  `${baseUrl}/${root}/${folder.name}/${file.name}`
+              ) ?? [];
+
+          return {
+            folder: folder.name,
+            images,
+          };
+        })
+    );
+
     folderData.sort((a, b) => b.folder.localeCompare(a.folder));
 
     return NextResponse.json(folderData);

@@ -42,14 +42,14 @@ export default function AboutPage() {
         whileHover={ { scale: 1.05 } }
       /> */}
       <LooseSprite
-        imgX={2250}
-        imgY={1450}
+        imgX={3200}
+        imgY={2000}
         imgW={540}
         imgH={540}
         src="/assets/about/badge.png"
         rotation={40}
-        zIndex={-100}
-        // onClick={() => console.log("Bottom right sprite")}
+        zIndex={100}
+        onClick={() => router.push("/admin")}
       />
 
       {/* Center Content */}

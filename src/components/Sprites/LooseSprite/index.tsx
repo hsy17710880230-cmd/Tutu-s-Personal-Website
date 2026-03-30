@@ -57,13 +57,14 @@ export function LooseSprite({
       onHoverEnd={onHoverEnd}
       whileHover={whileHover}
       whileTap={whileTap}
+      animate={{ rotate: rotation }}
       className="fixed outline-none"
       style={{
         left: imgX * scale + offsetX,
         top: imgY * scale + offsetY,
         width: imgW * scale,
         height: imgH * scale,
-        transform: `rotate(${rotation}deg)`,
+        // transform: `rotate(${rotation}deg)`,
         transformOrigin: "center center",
         willChange: "transform",
         zIndex,
