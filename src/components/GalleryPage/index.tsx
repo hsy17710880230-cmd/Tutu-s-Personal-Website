@@ -7,6 +7,7 @@ import TitleWithNav from "../Title";
 
 type ProjectData = {
   images: string[];
+  description: string;
 };
 
 export default function GalleryPage({
@@ -43,17 +44,9 @@ export default function GalleryPage({
 
   return (
     <div className="relative w-full min-h-screen flex flex-col items-center">
-      {/* <HomeButton />
-      <BackButton/>
-      
 
-      <div className="w-full max-w-7xl mb-12">
-        <h1 className="text-3xl md:text-5xl font-bold text-center">
-          {underline2Capitalized(project as string)}
-        </h1>
-      </div> */}
 
-      <TitleWithNav project={project as string}/>
+      <TitleWithNav project={project as string} description={data.description} />
 
       {/* Masonry */}
       <div className="w-full max-w-7xl">

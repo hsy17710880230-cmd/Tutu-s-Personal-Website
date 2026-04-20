@@ -66,7 +66,6 @@ export default function ProjectPage({
                   title={title ? underline2Capitalized(it.title) : ""}
                   img_path={it.img_path}
                   onClick={() => router.push(`/${page}/${it.title}`)}
-                  displaySize={256}
                   crop
                 />
               ))}

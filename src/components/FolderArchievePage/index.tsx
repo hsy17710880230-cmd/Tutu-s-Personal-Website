@@ -58,8 +58,7 @@ export default function FolderArchivePage({
                   key={i}
                   img_path={src}
                   onClick={() => setZoomedImage(src)}
-                  crop={false} // keeps your original object-contain style
-                  displaySize={300} // adjust as needed for waterfall layout
+                  crop={false}
                   hoverEffect="hover:scale-[1.02]"
                   imgClass="transition-transform"
                 />

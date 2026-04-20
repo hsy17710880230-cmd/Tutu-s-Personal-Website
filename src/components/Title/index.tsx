@@ -3,17 +3,19 @@ import { useRouter } from "next/navigation"
 
 export default function TitleWithNav({
   project,
+  description,
   backImg = "/assets/back.png",
   homeImg = "/assets/home.png",
 }: {
   project: string,
+  description?: string,
   backImg?: string,
   homeImg?: string
 }) {
   const router = useRouter()
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
+    <div className="w-full max-w-7xl mx-auto mb-12">
       <div className="grid grid-cols-3 items-center">
         {/* Back */}
         <div className="flex justify-start">
@@ -50,6 +52,12 @@ export default function TitleWithNav({
           </button>
         </div>
       </div>
+
+      {description && (
+        <p className="text-center text-lg md:text-xl mt-4 px-27.5 sm:px-37.5 md:px-50 lg:px-60">
+          {underline2Capitalized(description)}
+        </p>
+      )}
     </div>
   )
 }

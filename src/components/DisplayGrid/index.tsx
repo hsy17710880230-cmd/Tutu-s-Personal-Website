@@ -9,9 +9,11 @@ export type DisplayGridProps = {
   onClick?: () => void;
   hoverEffect?: string;
   imgClass?: string;
-  displaySize?: number;
   crop?: boolean;
 };
+
+const RESPONSIVE_SIZES =
+  "(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw";
 
 export default function DisplayGrid({
   title,
@@ -19,7 +21,6 @@ export default function DisplayGrid({
   onClick,
   hoverEffect = "hover:scale-105",
   imgClass = "",
-  displaySize = 256,
   crop = true,
 }: DisplayGridProps) {
   const [isLoading, setIsLoading] = useState(true);
@@ -27,19 +28,15 @@ export default function DisplayGrid({
   return (
     <div
       onClick={onClick}
-      className={`cursor-pointer transition-transform ${hoverEffect} ${
+      className={`w-full cursor-pointer transition-transform ${hoverEffect} ${
         crop ? "" : "break-inside-avoid"
       }`}
-      style={!crop ? { width: displaySize } : undefined}
     >
       <div className="flex flex-col items-center gap-3">
         <div
-          style={
-            crop
-              ? { width: displaySize, height: displaySize }
-              : { width: displaySize }
-          }
-          className={`rounded-xl overflow-hidden relative`}
+          className={`w-full rounded-xl overflow-hidden relative ${
+            crop ? "aspect-square" : ""
+          }`}
         >
           {/* Skeleton placeholder */}
           {isLoading && (
@@ -55,7 +52,7 @@ export default function DisplayGrid({
               fill
               className={`object-cover ${imgClass} ${isLoading ? "opacity-0" : "opacity-100"} transition-opacity`}
               draggable={false}
-              sizes={`${displaySize}px`}
+              sizes={RESPONSIVE_SIZES}
               onLoadingComplete={() => setIsLoading(false)}
             />
           ) : (
@@ -66,7 +63,7 @@ export default function DisplayGrid({
               height={600}
               className={`w-full h-auto object-contain ${imgClass} ${isLoading ? "opacity-0" : "opacity-100"} transition-opacity`}
               draggable={false}
-              sizes={`${displaySize}px`}
+              sizes={RESPONSIVE_SIZES}
               onLoadingComplete={() => setIsLoading(false)}
             />
           )}
