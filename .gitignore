@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# to only be managae by supabase
+public/assets/handmade/*
+public/assets/homepage/*
+public/assets/illustration/*
+public/assets/sketch/*
+public/assets/work/*
