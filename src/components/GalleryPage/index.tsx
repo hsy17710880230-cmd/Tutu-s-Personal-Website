@@ -58,7 +58,7 @@ export default function GalleryPage({
               crop={false}
               hoverEffect="hover:scale-[1.02]"
               onClick={() => setZoomedImage(src)}
-            />
+            /> 
           ))}
         </div>
       </div>

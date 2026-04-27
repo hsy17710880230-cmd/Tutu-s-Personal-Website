@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { AuthProvider, useAuth } from "@/src/components/AuthProvider";
+import { supabase } from "@/src/lib/supabase";
 import TitleWithNav from "@/src/components/Title";
 
 interface FileItem {
@@ -11,13 +11,60 @@ interface FileItem {
   isFolder: boolean;
 }
 
-function AdminPageContent() {
-  const { user, session, signOut } = useAuth();
+export default function AdminPage() {
   const router = useRouter();
 
+  const [session, setSession] = useState<string | null>(null);
+
   const [files, setFiles] = useState<FileItem[]>([]);
-  const [currentPath, setCurrentPath] = useState(""); // folder path
+  const [currentPath, setCurrentPath] = useState("");
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (cancelled) return;
+      if (!user) {
+        router.push("/auth");
+        return;
+      }
+      const { data } = await supabase.auth.getSession();
+      if (cancelled) return;
+
+      const token = data.session?.access_token ?? null;
+      if (!token) return;
+      setSession(token);
+
+      const res = await fetch(`/api/admin/files/list?path=`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const list: FileItem[] = await res.json();
+      if (cancelled) return;
+      setFiles(list);
+    })();
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, sessionData) => {
+        if (!sessionData) {
+          router.push("/auth");
+        } else {
+          setSession(sessionData.access_token);
+        }
+      }
+    );
+
+    return () => {
+      cancelled = true;
+      listener.subscription.unsubscribe();
+    };
+  }, [router]);
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    router.push("/auth");
+  };
 
   const loadFiles = useCallback(async (path = "") => {
     if (!session) return;
@@ -29,17 +76,6 @@ function AdminPageContent() {
     setFiles(data);
     setCurrentPath(path);
   }, [session]);
-
-  useEffect(() => {
-    const helper = async () => {
-      if (!user) {
-        router.push("/auth");
-      } else {
-        await loadFiles();
-      }
-    }
-    helper()
-  }, [user, loadFiles, router]);
 
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -105,7 +141,7 @@ function AdminPageContent() {
     loadFiles(parent);
   };
 
-  if (!user) return null;
+  if (authLoading || !session) return null;
 
   return (
     <div className="p-10 max-w-6xl mx-auto space-y-6 flex flex-col">
@@ -173,14 +209,5 @@ function AdminPageContent() {
         ))}
       </div>
     </div>
-  );
-}
-
-// Wrap only this page with AuthProvider
-export default function AdminPageWrapper() {
-  return (
-    <AuthProvider>
-      <AdminPageContent />
-    </AuthProvider>
   );
 }
