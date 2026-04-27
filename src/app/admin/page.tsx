@@ -141,7 +141,7 @@ export default function AdminPage() {
     loadFiles(parent);
   };
 
-  if (authLoading || !session) return null;
+  if (!session) return null;
 
   return (
     <div className="p-10 max-w-6xl mx-auto space-y-6 flex flex-col">
